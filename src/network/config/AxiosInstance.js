@@ -11,6 +11,16 @@ const clearAll = async () => {
     }
 };
 
+const refreshToken = async () => {
+    let axiosInstance = await AxiosInstance();
+    const refreshTokenData = await AsyncStorage.getItem('refreshToken');
+
+    const res = await axiosInstance.post('/users/refreshtoken', {
+        refreshToken: refreshTokenData,
+    });
+    return res;
+};
+
 const AxiosInstance = async () => {
     const instance = axios.create({
         baseURL: BASE_URL,
@@ -41,24 +51,31 @@ const AxiosInstance = async () => {
         async error => {
             console.log('====================================');
             console.log('error', error);
+            console.log('error 2', error.response);
             console.log('====================================');
             const originalConfig = error.config;
 
             if (originalConfig.url !== '/auth/signin' && error.response) {
                 if (error.response.status === 401 && !originalConfig._retry) {
-                    // originalConfig._retry = true;
+                    originalConfig._retry = true;
 
-                    // try {
-                    //     const callRefreshTokenRequest = await refreshToken();
+                    try {
+                        const callRefreshTokenRequest = await refreshToken();
 
-                    //     const newToken = callRefreshTokenRequest.data?.token!;
+                        const newToken = callRefreshTokenRequest.data.token;
+                        const newRefreshToken =
+                            callRefreshTokenRequest.data.refreshToken;
 
-                    //     await AsyncStorage.setItem('token', newToken);
+                        await AsyncStorage.setItem('token', newToken);
+                        await AsyncStorage.setItem(
+                            'refreshToken',
+                            newRefreshToken,
+                        );
 
-                    //     return instance(originalConfig);
-                    // } catch (_error) {
-                    return Promise.reject(error);
-                    // }
+                        return instance(originalConfig);
+                    } catch (_error) {
+                        return Promise.reject(error);
+                    }
                 }
                 if (error.response.status === 403) {
                     clearAll();
