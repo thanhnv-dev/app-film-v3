@@ -30,18 +30,18 @@ const Splash = ({navigation}) => {
         }
     };
 
-    const getData = () => {
-        setTimeout(() => {
-            //call api
-            //hoàn thành và có data
-            // setData('res');
-        }, 1000);
-    };
+    // const getData = () => {
+    //     setTimeout(() => {
+    //         //call api
+    //         //hoàn thành và có data
+    //         // setData('res');
+    //     }, 1000);
+    // };
 
     useEffect(() => {
-        console.log('call useEffect');
-        getData();
-        // initApp();
+        // console.log('call useEffect');
+        // getData();
+        initApp();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -53,7 +53,7 @@ const Splash = ({navigation}) => {
         <View style={styles.container}>
             {console.log('render view')}
             <ActivityIndicator size="large" />
-            <Button title="setState" onPress={() => setData(['123'])} />
+            {/* <Button title="setState" onPress={() => setData(['123'])} /> */}
         </View>
     );
 };

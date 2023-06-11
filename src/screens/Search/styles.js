@@ -46,4 +46,8 @@ export default {
         fontSize: 30,
         color: 'white',
     },
+    itemFilter: {
+        borderRadius: 10,
+        backgroundColor: '#6DD5FA',
+    },
 };

@@ -21,6 +21,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 const Search = ({navigation}) => {
     const dataFilms = useSelector(state => state.films.data);
+    const dataFilmsWithTopic = useSelector(state => state.films.dataWithTopics);
     const [resultsData, setResultsData] = useState([]);
 
     useEffect(() => {}, []);
@@ -59,6 +60,23 @@ const Search = ({navigation}) => {
         );
     };
 
+    const renderFiliter = ({item}) => {
+        return (
+            <TouchableOpacity
+                style={[
+                    styles.mh10,
+                    styles.itemFilter,
+                    styles.center,
+                    styles.mt10,
+                ]}
+                onPress={() => {
+                    setResultsData(item.data);
+                }}>
+                <Text style={styles.mh10}>{item.topic}</Text>
+            </TouchableOpacity>
+        );
+    };
+
     const filmStatus = dataFilm => {
         if (dataFilm?.episode?.current === 0) {
             return 'Trailer';
@@ -73,10 +91,19 @@ const Search = ({navigation}) => {
         }
     };
 
-    const renderFilm = ({item}) => {
+    const renderFilm = ({item, index}) => {
         return (
             <TouchableOpacity
-                style={[styles.itemFilm, styles.mh10, styles.flexRow]}
+                style={[
+                    styles.itemFilm,
+                    styles.mh10,
+                    styles.flexRow,
+                    // eslint-disable-next-line react-native/no-inline-styles
+                    {
+                        marginBottom:
+                            index + 1 === resultsData.length ? 220 : 0,
+                    },
+                ]}
                 onPress={() => {
                     navigation.navigate('Details', {
                         idFilm: item._id,
@@ -140,49 +167,54 @@ const Search = ({navigation}) => {
     };
 
     return (
-        <TouchableWithoutFeedback
-            onPress={Keyboard.dismiss}
-            style={styles.flex1}>
-            <LinearGradient
-                colors={['#DAE2F8', '#D6A4A4']}
-                style={styles.flex1}>
-                <SafeAreaView>
-                    <View
-                        style={[
-                            styles.flexRow,
-                            styles.justifyContentBetween,
-                            styles.alignItemsCenter,
-                            styles.mh15,
-                            styles.mbt10,
-                        ]}>
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                            <Icon name={'chevron-back'} size={30} />
-                        </TouchableOpacity>
-                        <Text style={styles.titleSearch}>Tìm Kiếm</Text>
-                        <View style={{width: 22}} />
-                    </View>
-                    <View
-                        style={[
-                            styles.shadow,
-                            styles.boxInput,
-                            styles.mh15,
-                            styles.justifyContentCenter,
-                        ]}>
-                        <TextInput
-                            paddingLeft={10}
-                            clearButtonMode="always"
-                            keyboardType="default"
-                            secureTextEntry={false}
-                            placeholder={'Nhập tên phim'}
-                            placeholderTextColor="#353839"
-                            onChangeText={onChangeInputText}
-                        />
-                    </View>
+        <LinearGradient colors={['#DAE2F8', '#D6A4A4']} style={styles.flex1}>
+            <SafeAreaView>
+                <View
+                    style={[
+                        styles.flexRow,
+                        styles.justifyContentBetween,
+                        styles.alignItemsCenter,
+                        styles.mh15,
+                        styles.mbt10,
+                    ]}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Icon name={'chevron-back'} size={30} />
+                    </TouchableOpacity>
+                    <Text style={styles.titleSearch}>Tìm Kiếm</Text>
+                    <View style={{width: 22}} />
+                </View>
+                <View
+                    style={[
+                        styles.shadow,
+                        styles.boxInput,
+                        styles.mh15,
+                        styles.justifyContentCenter,
+                    ]}>
+                    <TextInput
+                        paddingLeft={10}
+                        clearButtonMode="always"
+                        keyboardType="default"
+                        secureTextEntry={false}
+                        placeholder={'Nhập tên phim'}
+                        placeholderTextColor="#353839"
+                        onChangeText={onChangeInputText}
+                    />
+                </View>
+                <View style={styles.h40}>
+                    <FlatList
+                        data={dataFilmsWithTopic}
+                        renderItem={renderFiliter}
+                        horizontal={true}
+                        showsHorizontalScrollIndicator={false}
+                    />
+                </View>
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <View style={styles.mt10}>
                         {resultsData.length > 0 ? (
                             <FlatList
                                 data={resultsData}
                                 renderItem={renderFilm}
+                                showsVerticalScrollIndicator={false}
                             />
                         ) : (
                             <View>
@@ -197,9 +229,9 @@ const Search = ({navigation}) => {
                             </View>
                         )}
                     </View>
-                </SafeAreaView>
-            </LinearGradient>
-        </TouchableWithoutFeedback>
+                </TouchableWithoutFeedback>
+            </SafeAreaView>
+        </LinearGradient>
     );
 };
 

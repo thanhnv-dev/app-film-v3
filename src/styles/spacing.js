@@ -45,6 +45,9 @@ export default {
     mt40: {
         marginTop: 40,
     },
+    mt50: {
+        marginTop: 50,
+    },
     postionAbsolute: {
         position: 'absolute',
     },
@@ -68,5 +71,8 @@ export default {
     },
     p10: {
         padding: 10,
+    },
+    h40: {
+        height: 40,
     },
 };
